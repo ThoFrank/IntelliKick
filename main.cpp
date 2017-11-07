@@ -34,6 +34,7 @@ void del_weights(){
 neuron_info::neuron_info() {
     queue_start=0;
     queue_end=OUTPUT_MEMORY_SIZE-2;
+    bias=0;
 }
 void neuron_info::queue(double val) {
     queue_end=(queue_end+1)%OUTPUT_MEMORY_SIZE;
@@ -52,8 +53,9 @@ void neuron_info::printInfo() {
          << "Max Activation: " << max_activation << endl
          << "bias: " << bias << endl
          << "Queue: " << endl;
+    cout << output_memory[queue_start] << endl;
     for (int i = queue_start; i != queue_end; i=(i+1)%OUTPUT_MEMORY_SIZE ) {
-        cout << output_memory[i] << endl;
+        cout << output_memory[(i+1)%OUTPUT_MEMORY_SIZE] << endl;
     }
 }
 
@@ -159,8 +161,14 @@ int main(int argc, char *argv[]) {
     }
 
     for (int i = 0; i < 5; ++i) {
-        input_neuron_info[0].output_memory[input_neuron_info[0].queue_end];
+        input_neuron_info[0].output_memory[input_neuron_info[0].queue_end]=i;
+        cout << "Tick " << i << endl;
+        cout << "input neuron 0:" << endl;
+        input_neuron_info[0].printInfo();
+        cout << endl;
+        cout << "output neuron 0:" << endl;
         output_neuron_info[0].printInfo();
+        cout << endl;
         tick();
     }
 
