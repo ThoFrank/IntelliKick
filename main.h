@@ -6,7 +6,7 @@
 #define NEURALKICKER_MAIN_H
 
 
-const unsigned MAX_HIDDEN_NEURONS = 1000000;
+const unsigned MAX_HIDDEN_NEURONS = 10;
 const unsigned INPUT_NEURONS=5;
 const unsigned OUTPUT_NEURONS=8;
 const unsigned OUTPUT_MEMORY_SIZE=5;
@@ -25,6 +25,7 @@ struct neuron_info{
     void queue(double val);
     double dequeue();
     double last_output();
+    void printInfo();
 };
 //neuron info for each neuron
 neuron_info *input_neuron_info;

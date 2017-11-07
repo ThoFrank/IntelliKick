@@ -1,9 +1,11 @@
 #include <iostream>
 #include <limits>
 #include <math.h>
+#include <string>
 #include "main.h"
 
-
+using std::cout;
+using std::endl;
 
 /*
  *  weight matrix
@@ -35,7 +37,7 @@ neuron_info::neuron_info() {
 }
 void neuron_info::queue(double val) {
     queue_end=(queue_end+1)%OUTPUT_MEMORY_SIZE;
-    output_memory[queue_end];
+    output_memory[queue_end]=val;
 }
 double neuron_info::dequeue() {
     double ret=output_memory[queue_start];
@@ -45,11 +47,19 @@ double neuron_info::dequeue() {
 double neuron_info::last_output() {
     return output_memory[queue_end];
 }
+void neuron_info::printInfo() {
+    cout << "Exists: " << exist << endl
+         << "Max Activation: " << max_activation << endl
+         << "bias: " << bias << endl
+         << "Queue: " << endl;
+    for (int i = queue_start; i != queue_end; i=(i+1)%OUTPUT_MEMORY_SIZE ) {
+        cout << output_memory[i] << endl;
+    }
+}
 
 //initialize neuron info
 void init_neuron_info(){
     input_neuron_info=new neuron_info[INPUT_NEURONS];
-    std::cout << sizeof(neuron_info) << std::endl;
     for (int i = 0; i < INPUT_NEURONS; ++i) {
         input_neuron_info[i].exist=true;
         input_neuron_info[i].max_activation=std::numeric_limits<double>::max();
@@ -63,8 +73,8 @@ void init_neuron_info(){
 
     hidden_neuron_info=new neuron_info[MAX_HIDDEN_NEURONS];
     for (int i = 0; i < MAX_HIDDEN_NEURONS; ++i) {
-        output_neuron_info[i].exist=false;
-        output_neuron_info[i].max_activation=0;
+        hidden_neuron_info[i].exist=false;
+        hidden_neuron_info[i].max_activation=0;
     }
 }
 
@@ -112,13 +122,16 @@ void tick(){
     }
 
     //add bias; activate and enqueue buffer
+    //TODO use MaxActivation
     for (int y = 0; y < OUTPUT_NEURONS; ++y) {
         buffer[y]+=output_neuron_info[y].bias;
         output_neuron_info[y].queue( activate(buffer[y]) );
+        output_neuron_info[y].dequeue();
     }
-    for (int y = OUTPUT_NEURONS; y < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; ++y) {
-        buffer[y]+=output_neuron_info[y].bias;
-        hidden_neuron_info[y].queue( activate(buffer[y]) );
+    for (int y = 0; y < MAX_HIDDEN_NEURONS; ++y) {
+        buffer[y+OUTPUT_NEURONS]+=output_neuron_info[y].bias;
+        hidden_neuron_info[y].queue( activate(buffer[y+OUTPUT_NEURONS]) );
+        hidden_neuron_info[y].dequeue();
     }
 }
 
@@ -145,7 +158,11 @@ int main(int argc, char *argv[]) {
         update_connection(0,i,1);
     }
 
-    tick();
+    for (int i = 0; i < 5; ++i) {
+        input_neuron_info[0].output_memory[input_neuron_info[0].queue_end];
+        output_neuron_info[0].printInfo();
+        tick();
+    }
 
     del_weights();
     del_neuron_info();
