@@ -125,6 +125,8 @@ void tick(){
 
     //add bias; activate and enqueue buffer
     //TODO use MaxActivation
+    //Variante 1: Maxactivation überschritten -> keine Aktivierung
+    //Variante 2: Maxactivation überschritten -> gedeckelte Aktivierung
     for (int y = 0; y < OUTPUT_NEURONS; ++y) {
         buffer[y]+=output_neuron_info[y].bias;
         output_neuron_info[y].queue( activate(buffer[y]) );

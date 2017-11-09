@@ -123,6 +123,33 @@ NeuralKicker/fast:
 	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/build
 .PHONY : NeuralKicker/fast
 
+Pong.o: Pong.cpp.o
+
+.PHONY : Pong.o
+
+# target to build an object file
+Pong.cpp.o:
+	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.o
+.PHONY : Pong.cpp.o
+
+Pong.i: Pong.cpp.i
+
+.PHONY : Pong.i
+
+# target to preprocess a source file
+Pong.cpp.i:
+	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.i
+.PHONY : Pong.cpp.i
+
+Pong.s: Pong.cpp.s
+
+.PHONY : Pong.s
+
+# target to generate assembly for a file
+Pong.cpp.s:
+	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.s
+.PHONY : Pong.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -159,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NeuralKicker"
+	@echo "... Pong.o"
+	@echo "... Pong.i"
+	@echo "... Pong.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
