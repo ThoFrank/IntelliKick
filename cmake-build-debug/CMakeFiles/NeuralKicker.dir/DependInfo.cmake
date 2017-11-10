@@ -4,8 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/thomas/CLionProjects/NeuralKicker/Pong.cpp" "/home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles/NeuralKicker.dir/Pong.cpp.o"
-  "/home/thomas/CLionProjects/NeuralKicker/main.cpp" "/home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles/NeuralKicker.dir/main.cpp.o"
+  "/home/sebastian/CLionProjects/IntelliKick/main.cpp" "/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/NeuralKicker.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

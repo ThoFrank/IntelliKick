@@ -32,8 +32,8 @@ void del_weights(){
  * Neuron info
  */
 neuron_info::neuron_info() {
-    queue_start=0;
-    queue_end=OUTPUT_MEMORY_SIZE-2;
+    queue_start = 0;
+    queue_end = OUTPUT_MEMORY_SIZE-2;
     bias=0;
 }
 void neuron_info::queue(double val) {
@@ -95,7 +95,6 @@ void update_connection(int actor_neuron, int reciever_neuron, double weight){
  */
 void tick(){
     double buffer[OUTPUT_NEURONS+MAX_HIDDEN_NEURONS];
-
     for (int y = 0; y < OUTPUT_NEURONS; ++y) {
         buffer[y]=0;
         for (int x = 0; x < INPUT_NEURONS; ++x) {
@@ -105,7 +104,7 @@ void tick(){
         }
         for (int x = INPUT_NEURONS; x < MAX_HIDDEN_NEURONS+INPUT_NEURONS; ++x) {
             if(hidden_neuron_info[x].exist){
-                buffer[y] += weights[x][y] * hidden_neuron_info[x].last_output();
+                buffer[y] += weights[x][y] * hidden_neuron_info[x-INPUT_NEURONS].last_output();
             }
         }
     }
@@ -118,7 +117,7 @@ void tick(){
         }
         for (int x = INPUT_NEURONS; x < MAX_HIDDEN_NEURONS+INPUT_NEURONS; ++x) {
             if(hidden_neuron_info[x].exist){
-                buffer[y]+=weights[x][y] * hidden_neuron_info[x].last_output();
+                buffer[y]+=weights[x][y] * hidden_neuron_info[x-INPUT_NEURONS].last_output();
             }
         }
     }

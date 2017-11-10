@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/NeuralKicker.dir/main.cpp.o"
-  "CMakeFiles/NeuralKicker.dir/Pong.cpp.o"
   "NeuralKicker.pdb"
   "NeuralKicker"
 )

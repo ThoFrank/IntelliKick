@@ -48,10 +48,10 @@ RM = /opt/clion-2017.2.3/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thomas/CLionProjects/NeuralKicker
+CMAKE_SOURCE_DIR = /home/sebastian/CLionProjects/IntelliKick
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug
+CMAKE_BINARY_DIR = /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,33 +123,6 @@ NeuralKicker/fast:
 	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/build
 .PHONY : NeuralKicker/fast
 
-Pong.o: Pong.cpp.o
-
-.PHONY : Pong.o
-
-# target to build an object file
-Pong.cpp.o:
-	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.o
-.PHONY : Pong.cpp.o
-
-Pong.i: Pong.cpp.i
-
-.PHONY : Pong.i
-
-# target to preprocess a source file
-Pong.cpp.i:
-	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.i
-.PHONY : Pong.cpp.i
-
-Pong.s: Pong.cpp.s
-
-.PHONY : Pong.s
-
-# target to generate assembly for a file
-Pong.cpp.s:
-	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.s
-.PHONY : Pong.cpp.s
-
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -186,9 +159,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NeuralKicker"
-	@echo "... Pong.o"
-	@echo "... Pong.i"
-	@echo "... Pong.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -6,15 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/thomas/CLionProjects/NeuralKicker/Pong.cpp
-Pong.h
-/home/thomas/CLionProjects/NeuralKicker/Pong.h
-ncurses.h
--
-
-/home/thomas/CLionProjects/NeuralKicker/Pong.h
-
-/home/thomas/CLionProjects/NeuralKicker/main.cpp
+/home/sebastian/CLionProjects/IntelliKick/main.cpp
 iostream
 -
 limits
@@ -24,7 +16,7 @@ math.h
 string
 -
 main.h
-/home/thomas/CLionProjects/NeuralKicker/main.h
+/home/sebastian/CLionProjects/IntelliKick/main.h
 
-/home/thomas/CLionProjects/NeuralKicker/main.h
+/home/sebastian/CLionProjects/IntelliKick/main.h
 

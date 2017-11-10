@@ -43,10 +43,10 @@ RM = /opt/clion-2017.2.3/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thomas/CLionProjects/NeuralKicker
+CMAKE_SOURCE_DIR = /home/sebastian/CLionProjects/IntelliKick
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug
+CMAKE_BINARY_DIR = /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/NeuralKicker.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/NeuralKicker.dir/flags.make
 
 CMakeFiles/NeuralKicker.dir/main.cpp.o: CMakeFiles/NeuralKicker.dir/flags.make
 CMakeFiles/NeuralKicker.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/NeuralKicker.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/NeuralKicker.dir/main.cpp.o -c /home/thomas/CLionProjects/NeuralKicker/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/NeuralKicker.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/NeuralKicker.dir/main.cpp.o -c /home/sebastian/CLionProjects/IntelliKick/main.cpp
 
 CMakeFiles/NeuralKicker.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NeuralKicker.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thomas/CLionProjects/NeuralKicker/main.cpp > CMakeFiles/NeuralKicker.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sebastian/CLionProjects/IntelliKick/main.cpp > CMakeFiles/NeuralKicker.dir/main.cpp.i
 
 CMakeFiles/NeuralKicker.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NeuralKicker.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thomas/CLionProjects/NeuralKicker/main.cpp -o CMakeFiles/NeuralKicker.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sebastian/CLionProjects/IntelliKick/main.cpp -o CMakeFiles/NeuralKicker.dir/main.cpp.s
 
 CMakeFiles/NeuralKicker.dir/main.cpp.o.requires:
 
@@ -81,43 +81,17 @@ CMakeFiles/NeuralKicker.dir/main.cpp.o.provides: CMakeFiles/NeuralKicker.dir/mai
 CMakeFiles/NeuralKicker.dir/main.cpp.o.provides.build: CMakeFiles/NeuralKicker.dir/main.cpp.o
 
 
-CMakeFiles/NeuralKicker.dir/Pong.cpp.o: CMakeFiles/NeuralKicker.dir/flags.make
-CMakeFiles/NeuralKicker.dir/Pong.cpp.o: ../Pong.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/NeuralKicker.dir/Pong.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/NeuralKicker.dir/Pong.cpp.o -c /home/thomas/CLionProjects/NeuralKicker/Pong.cpp
-
-CMakeFiles/NeuralKicker.dir/Pong.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NeuralKicker.dir/Pong.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thomas/CLionProjects/NeuralKicker/Pong.cpp > CMakeFiles/NeuralKicker.dir/Pong.cpp.i
-
-CMakeFiles/NeuralKicker.dir/Pong.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NeuralKicker.dir/Pong.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thomas/CLionProjects/NeuralKicker/Pong.cpp -o CMakeFiles/NeuralKicker.dir/Pong.cpp.s
-
-CMakeFiles/NeuralKicker.dir/Pong.cpp.o.requires:
-
-.PHONY : CMakeFiles/NeuralKicker.dir/Pong.cpp.o.requires
-
-CMakeFiles/NeuralKicker.dir/Pong.cpp.o.provides: CMakeFiles/NeuralKicker.dir/Pong.cpp.o.requires
-	$(MAKE) -f CMakeFiles/NeuralKicker.dir/build.make CMakeFiles/NeuralKicker.dir/Pong.cpp.o.provides.build
-.PHONY : CMakeFiles/NeuralKicker.dir/Pong.cpp.o.provides
-
-CMakeFiles/NeuralKicker.dir/Pong.cpp.o.provides.build: CMakeFiles/NeuralKicker.dir/Pong.cpp.o
-
-
 # Object files for target NeuralKicker
 NeuralKicker_OBJECTS = \
-"CMakeFiles/NeuralKicker.dir/main.cpp.o" \
-"CMakeFiles/NeuralKicker.dir/Pong.cpp.o"
+"CMakeFiles/NeuralKicker.dir/main.cpp.o"
 
 # External object files for target NeuralKicker
 NeuralKicker_EXTERNAL_OBJECTS =
 
 NeuralKicker: CMakeFiles/NeuralKicker.dir/main.cpp.o
-NeuralKicker: CMakeFiles/NeuralKicker.dir/Pong.cpp.o
 NeuralKicker: CMakeFiles/NeuralKicker.dir/build.make
 NeuralKicker: CMakeFiles/NeuralKicker.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable NeuralKicker"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable NeuralKicker"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/NeuralKicker.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -126,7 +100,6 @@ CMakeFiles/NeuralKicker.dir/build: NeuralKicker
 .PHONY : CMakeFiles/NeuralKicker.dir/build
 
 CMakeFiles/NeuralKicker.dir/requires: CMakeFiles/NeuralKicker.dir/main.cpp.o.requires
-CMakeFiles/NeuralKicker.dir/requires: CMakeFiles/NeuralKicker.dir/Pong.cpp.o.requires
 
 .PHONY : CMakeFiles/NeuralKicker.dir/requires
 
@@ -135,6 +108,6 @@ CMakeFiles/NeuralKicker.dir/clean:
 .PHONY : CMakeFiles/NeuralKicker.dir/clean
 
 CMakeFiles/NeuralKicker.dir/depend:
-	cd /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thomas/CLionProjects/NeuralKicker /home/thomas/CLionProjects/NeuralKicker /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug /home/thomas/CLionProjects/NeuralKicker/cmake-build-debug/CMakeFiles/NeuralKicker.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sebastian/CLionProjects/IntelliKick /home/sebastian/CLionProjects/IntelliKick /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug /home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/NeuralKicker.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/NeuralKicker.dir/depend
 
