@@ -6,7 +6,7 @@
 
 using std::cout;
 using std::endl;
-
+//test change -.-
 /*
  *  weight matrix
  */
