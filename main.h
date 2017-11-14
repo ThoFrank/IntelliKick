@@ -7,9 +7,10 @@
 
 
 const unsigned MAX_HIDDEN_NEURONS = 10;
-const unsigned INPUT_NEURONS=5;
-const unsigned OUTPUT_NEURONS=8;
-const unsigned OUTPUT_MEMORY_SIZE=5;
+const unsigned INPUT_NEURONS = 5;
+const unsigned OUTPUT_NEURONS = 8;
+const unsigned OUTPUT_MEMORY_SIZE = 5;
+const unsigned MAX_AXION_LENGTH = 10;
 
 /*
  * Neuron info
@@ -19,11 +20,10 @@ struct neuron_info{
     bool exist;
     double max_activation;
     double output_memory[OUTPUT_MEMORY_SIZE];
-    unsigned queue_start, queue_end;
+    unsigned queue_pointer;
     double bias; //used for shifting the activation function
     neuron_info();
-    void queue(double val);
-    double dequeue();
+    void enqueue(double val);
     double last_output();
     void printInfo();
 };
@@ -35,6 +35,22 @@ neuron_info *hidden_neuron_info;
 void init_neuron_info();
 //deallocate memory of neuron info
 void del_neuron_info();
+
+
+struct axon_info{
+    bool exist = false;
+    double weight;
+    int axon_length;
+    double *axon_throughtput_queue;
+    unsigned queue_pointer;
+    void enqueue(double val);
+    void printInfo();
+};
+//network graph as adjacency matrix
+axon_info **network_connection_info;
+void initNetwork();
+void del_Network();
+void initializeAxon(int x, int y);
 
 
 
@@ -55,20 +71,23 @@ void del_neuron_info();
  *
  *  weights[0][0] ist Gewicht der Kante In1 -> Ou1
  */
-double **weights;
+/*double **weights;
 //initialize empty weight matix (allocate storage)
 void init_weights();
 //deallocate memory of weight matrix
 void del_weights();
 //add connection between neurons; returns 0 if successfull
-void update_connection(int actor_neuron, int reciever_neuron, double weight);
+void update_connection(int actor_neuron, int reciever_neuron, double weight);*/
 
 
 /*
  * feed forward
  */
 void tick();
+void learn();
 //activation function
-double (*activate) (double);
+double (*activate) (double, double, double);
+
+//double activate();
 
 #endif //NEURALKICKER_MAIN_H
