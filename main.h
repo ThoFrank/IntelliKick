@@ -6,11 +6,11 @@
 #define NEURALKICKER_MAIN_H
 
 
-const unsigned MAX_HIDDEN_NEURONS = 10;
+const unsigned MAX_HIDDEN_NEURONS = 1;
 const unsigned INPUT_NEURONS = 5;
 const unsigned OUTPUT_NEURONS = 8;
 const unsigned OUTPUT_MEMORY_SIZE = 5;
-const unsigned MAX_AXION_LENGTH = 10;
+const unsigned MAX_AXON_LENGTH = 5;
 
 /*
  * Neuron info
@@ -38,10 +38,11 @@ void del_neuron_info();
 
 
 struct axon_info{
-    bool exist = false;
+    axon_info();
+    bool exist;
     double weight;
     int axon_length;
-    double *axon_throughtput_queue;
+    double *axon_throughput_queue;
     unsigned queue_pointer;
     void enqueue(double val);
     void printInfo();
@@ -55,7 +56,7 @@ void initializeAxon(int x, int y);
 
 
 /*
- *  weight matrix
+ *  network matrix
  *      In1     In2     ...     Ne1     Ne2     ...
  *  Ou1
  *
@@ -71,22 +72,17 @@ void initializeAxon(int x, int y);
  *
  *  weights[0][0] ist Gewicht der Kante In1 -> Ou1
  */
-/*double **weights;
-//initialize empty weight matix (allocate storage)
-void init_weights();
-//deallocate memory of weight matrix
-void del_weights();
-//add connection between neurons; returns 0 if successfull
-void update_connection(int actor_neuron, int reciever_neuron, double weight);*/
-
 
 /*
  * feed forward
  */
 void tick();
 void learn();
+void helpLearn(int, double);
 //activation function
 double (*activate) (double, double, double);
+
+double relu_tanh(double, double, double);
 
 //double activate();
 
