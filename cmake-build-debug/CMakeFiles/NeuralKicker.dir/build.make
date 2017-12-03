@@ -90,6 +90,11 @@ NeuralKicker_EXTERNAL_OBJECTS =
 
 NeuralKicker: CMakeFiles/NeuralKicker.dir/main.cpp.o
 NeuralKicker: CMakeFiles/NeuralKicker.dir/build.make
+NeuralKicker: /usr/lib/x86_64-linux-gnu/libsfml-network.so
+NeuralKicker: /usr/lib/x86_64-linux-gnu/libsfml-audio.so
+NeuralKicker: /usr/lib/x86_64-linux-gnu/libsfml-graphics.so
+NeuralKicker: /usr/lib/x86_64-linux-gnu/libsfml-window.so
+NeuralKicker: /usr/lib/x86_64-linux-gnu/libsfml-system.so
 NeuralKicker: CMakeFiles/NeuralKicker.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable NeuralKicker"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/NeuralKicker.dir/link.txt --verbose=$(VERBOSE)

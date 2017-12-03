@@ -6,11 +6,11 @@
 #define NEURALKICKER_MAIN_H
 
 
-const unsigned MAX_HIDDEN_NEURONS = 1;
-const unsigned INPUT_NEURONS = 5;
-const unsigned OUTPUT_NEURONS = 8;
-const unsigned OUTPUT_MEMORY_SIZE = 5;
-const unsigned MAX_AXON_LENGTH = 5;
+const int MAX_HIDDEN_NEURONS = 50;
+const int INPUT_NEURONS = 5;
+const int OUTPUT_NEURONS = 8;
+const int OUTPUT_MEMORY_SIZE = 5;
+const int MAX_AXON_LENGTH = 5;
 
 /*
  * Neuron info
@@ -27,10 +27,7 @@ struct neuron_info{
     double last_output();
     void printInfo();
 };
-//neuron info for each neuron
-neuron_info *input_neuron_info;
-neuron_info *output_neuron_info;
-neuron_info *hidden_neuron_info;
+
 //initialize neuron info;
 void init_neuron_info();
 //deallocate memory of neuron info
@@ -47,11 +44,10 @@ struct axon_info{
     void enqueue(double val);
     void printInfo();
 };
-//network graph as adjacency matrix
-axon_info **network_connection_info;
-void initNetwork();
+
+void init_Network();
 void del_Network();
-void initializeAxon(int x, int y);
+void init_Axon(int x, int y);
 
 
 
@@ -78,12 +74,16 @@ void initializeAxon(int x, int y);
  */
 void tick();
 void learn();
-void helpLearn(int, double);
-//activation function
-double (*activate) (double, double, double);
+//void helpLearn(int, double);
+
 
 double relu_tanh(double, double, double);
 
-//double activate();
+
+neuron_info* get_input_neuron_info();
+neuron_info* get_output_neuron_info();
+neuron_info* get_hidden_neuron_info();
+axon_info** get_network_connection_info();
+//double (**get_activate())(double,double,double);
 
 #endif //NEURALKICKER_MAIN_H

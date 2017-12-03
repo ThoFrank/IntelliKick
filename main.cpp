@@ -4,9 +4,39 @@
 //#include <string>
 #include "main.h"
 #include <chrono>
+#include "grapher.h"
+#include <thread>
 
 using std::cout;
 using std::endl;
+
+//neuron info for each neuron
+neuron_info *input_neuron_info;
+neuron_info *output_neuron_info;
+neuron_info *hidden_neuron_info;
+
+//network graph as adjacency matrix
+axon_info **network_connection_info;
+
+//activation function
+double (*activate) (double, double, double);
+
+neuron_info* get_input_neuron_info(){
+    return input_neuron_info;
+}
+
+neuron_info* get_output_neuron_info(){
+    return output_neuron_info;
+}
+
+neuron_info* get_hidden_neuron_info(){
+    return hidden_neuron_info;
+}
+
+axon_info** get_network_connection_info(){
+    return network_connection_info;
+}
+
 
 /*
  * Neuron info
@@ -66,7 +96,7 @@ void axon_info::printInfo() {
 }
 
 //initializes the connections between existing neurones
-void initNetwork() {
+void init_Network() {
     //TODO : make generation random
     network_connection_info = new axon_info *[INPUT_NEURONS + MAX_HIDDEN_NEURONS];
     for (int x = 0; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
@@ -74,27 +104,24 @@ void initNetwork() {
         for (int y = 0; y < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; y++) {
             if (y < OUTPUT_NEURONS) {
                 if (x >= INPUT_NEURONS) {
-                    initializeAxon(x, y);
+                    init_Axon(x, y);
                 }
             } else {
-                if (x < INPUT_NEURONS) {
-                    initializeAxon(x, y);
-                }
+                init_Axon(x, y);
             }
         }
     }
 }
 
 //help method
-void initializeAxon(int x, int y) {
+void init_Axon(int x, int y) {
+    srand((unsigned) std::chrono::high_resolution_clock::now().time_since_epoch().count());
     //manipulating the exist will alter the network structure
     //-> should be manipulated by a fitting algorithm
-    network_connection_info[x][y].exist = true;
+    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 30) >= 1 ? 0 : 1;
     //following should only be set if exist = true
     //initializes network with random weights (between -1 and 1)
-    srand((unsigned) std::chrono::high_resolution_clock::now().time_since_epoch().count());
     network_connection_info[x][y].weight = (((double) random()) / RAND_MAX) * 2 - 1;
-    cout << network_connection_info[x][y].weight << endl;
     //initializes axon with random length (= queue length)
     network_connection_info[x][y].axon_length = (int) (1 + random() % MAX_AXON_LENGTH);
     //initializes queue; axon_length is the initial looked at destination synapsis
@@ -200,6 +227,18 @@ void tick() {
 
 int feedback = 0;                       //should only be -1, 0 or 1, altering that should have an effect similiar to
                                         //slightly good or bad when below 1/-1 or very good/bad when above 1/-1
+
+void helpLearn(int x, double total_activation) {
+    double percentage_change = total_activation / (OUTPUT_MEMORY_SIZE);
+    for (int y = 0; y < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; y++) {
+        if (feedback < 0) {
+            network_connection_info[x][y].weight -= network_connection_info[x][y].weight * percentage_change;
+        } else {
+            network_connection_info[x][y].weight += (1 - network_connection_info[x][y].weight) * percentage_change;
+        }
+    }
+}
+
 double expected_average_degree = 1;     //how many incoming axons a neuron has on average
 void learn() {
     if (feedback != 0) {
@@ -220,17 +259,6 @@ void learn() {
     }
 }
 
-void helpLearn(int x, double total_activation) {
-    double percentage_change = total_activation / (OUTPUT_MEMORY_SIZE);
-    for (int y = 0; y < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; y++) {
-        if (feedback < 0) {
-            network_connection_info[x][y].weight -= network_connection_info[x][y].weight * percentage_change;
-        } else {
-            network_connection_info[x][y].weight += (1 - network_connection_info[x][y].weight) * percentage_change;
-        }
-    }
-}
-
 double relu_tanh(double in, double maxActivation, double bias) {
     if (in > 0 && in < maxActivation) {
         return std::min(in + tanh(in + bias), maxActivation) == maxActivation ? maxActivation : tanh(
@@ -240,26 +268,41 @@ double relu_tanh(double in, double maxActivation, double bias) {
     }
 }
 
+void print_adjacency(){
+    for(int i = 0; i < INPUT_NEURONS + MAX_HIDDEN_NEURONS; i++){
+        for(int j = 0; j < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; j++){
+            cout << network_connection_info[i][j].exist << " ";
+        }
+        cout << endl;
+    }
+}
 
 /*
  * MAIN
  */
 int main(int argc, char *argv[]) {
     //set activation function
+
     activate = relu_tanh;
 
     init_neuron_info();
-    initNetwork();
+    init_Network();
 
-    input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 1;
+    print_adjacency();
+
+    std::thread window (createWindow);
+
+    /*input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 1;
     for (int i = 0; i < 15; i++) {
         for (int a = 0; a < OUTPUT_NEURONS; a++) {
             cout << i << " Output: " << output_neuron_info[a].last_output() << endl;
         }
         tick();
         input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 0;
-    }
+    }*/
 
+    window.join();
+    cout << "window closed" << endl;
     del_neuron_info();
     del_Network();
     return 0;

@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/NeuralKicker.dir/main.cpp.o  -o NeuralKicker 
+/usr/bin/c++  -g   CMakeFiles/NeuralKicker.dir/main.cpp.o  -o NeuralKicker /usr/lib/x86_64-linux-gnu/libsfml-network.so /usr/lib/x86_64-linux-gnu/libsfml-audio.so /usr/lib/x86_64-linux-gnu/libsfml-graphics.so /usr/lib/x86_64-linux-gnu/libsfml-window.so /usr/lib/x86_64-linux-gnu/libsfml-system.so 
