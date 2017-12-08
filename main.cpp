@@ -118,15 +118,15 @@ void init_Axon(int x, int y) {
     srand((unsigned) std::chrono::high_resolution_clock::now().time_since_epoch().count());
     //manipulating the exist will alter the network structure
     //-> should be manipulated by a fitting algorithm
-    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 30) >= 1 ? 0 : 1;
+    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 15) >= 1 ? 0 : 1;
     //following should only be set if exist = true
     //initializes network with random weights (between -1 and 1)
     network_connection_info[x][y].weight = (((double) random()) / RAND_MAX) * 2 - 1;
     //initializes axon with random length (= queue length)
     network_connection_info[x][y].axon_length = (int) (1 + random() % MAX_AXON_LENGTH);
     //initializes queue; axon_length is the initial looked at destination synapsis
-    network_connection_info[x][y].axon_throughput_queue =
-            new double[network_connection_info[x][y].axon_length];
+    //network_connection_info[x][y].axon_throughput_queue =
+    //        new double[network_connection_info[x][y].axon_length];
 }
 
 //deletes the connection between neurones
@@ -285,12 +285,18 @@ int main(int argc, char *argv[]) {
 
     activate = relu_tanh;
 
+    cout << "initializing neurons\n";
     init_neuron_info();
+    cout << "done\n";
+    cout << "initializing network\n";
     init_Network();
+    cout << "done\n";
 
-    print_adjacency();
+    //print_adjacency();
 
+    cout << "creating graph\n";
     std::thread window (createWindow);
+    cout << "window openend\n";
 
     /*input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 1;
     for (int i = 0; i < 15; i++) {

@@ -5,6 +5,8 @@
 #ifndef NEURALKICKER_GRAPHER_H
 #define NEURALKICKER_GRAPHER_H
 
+const bool complete = true;
+
 int createWindow();
 
 #endif //NEURALKICKER_GRAPHER_H
