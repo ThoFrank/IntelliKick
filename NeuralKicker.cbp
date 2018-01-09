@@ -17,16 +17,6 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/home/sebastian/CLionProjects/IntelliKick"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="rebuild_cache">
 				<Option working_dir="/home/sebastian/CLionProjects/IntelliKick"/>
 				<Option type="4"/>
@@ -78,6 +68,16 @@
 				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 NeuralKicker/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/sebastian/CLionProjects/IntelliKick"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 edit_cache"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sebastian/CLionProjects/IntelliKick/Makefile&quot;  VERBOSE=1 clean"/>

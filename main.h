@@ -6,11 +6,12 @@
 #define NEURALKICKER_MAIN_H
 
 
-const int MAX_HIDDEN_NEURONS = 100;
-const int INPUT_NEURONS = 10;
-const int OUTPUT_NEURONS = 20;
+const int MAX_HIDDEN_NEURONS = 10;
+const int INPUT_NEURONS = 5;
+const int OUTPUT_NEURONS = 8;
 const int OUTPUT_MEMORY_SIZE = 5;
 const int MAX_AXON_LENGTH = 1;
+const double CONNECTIVITY = 0.5;
 
 /*
  * Neuron info

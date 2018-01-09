@@ -120,8 +120,9 @@ void init_Axon(int x, int y) {
     srand((unsigned) std::chrono::high_resolution_clock::now().time_since_epoch().count());
     //manipulating the exist will alter the network structure
     //-> should be manipulated by a fitting algorithm
-    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 50) >= 1 ? 0 : 1;
-    if(network_connection_info[x][y].exist) {
+    network_connection_info[x][y].exist =
+            (int) ((((double) random()) / RAND_MAX) * MAX_HIDDEN_NEURONS * CONNECTIVITY) >= 1 ? 0 : 1;
+    if (network_connection_info[x][y].exist) {
         //following should only be set if exist = true
         //initializes network with random weights (between -1 and 1)
         network_connection_info[x][y].weight = (((double) random()) / RAND_MAX) * 2 - 1;
@@ -160,7 +161,7 @@ void init_neuron_info() {
         output_neuron_info[i].exist = true;
         output_neuron_info[i].max_activation = std::numeric_limits<double>::max();
         for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
-            input_neuron_info[i].output_memory[j] = 0;
+            output_neuron_info[i].output_memory[j] = 0;
         }
     }
 
@@ -169,7 +170,7 @@ void init_neuron_info() {
         hidden_neuron_info[i].exist = true;
         hidden_neuron_info[i].max_activation = std::numeric_limits<double>::max();
         for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
-            input_neuron_info[i].output_memory[j] = 0;
+            hidden_neuron_info[i].output_memory[j] = 0;
         }
     }
 }
@@ -197,12 +198,16 @@ void tick() {
         if (output_neuron_info[y].exist) {
             for (int x = 0; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
                 if (network_connection_info[x][y].exist) {
+                    std::cout << "lul1 " << network_connection_info[x][y].axon_throughput_queue[
+                            (network_connection_info[x][y].queue_pointer + 1) %
+                            network_connection_info[x][y].axon_length] << std::endl;
                     buffer += network_connection_info[x][y].axon_throughput_queue[
                             (network_connection_info[x][y].queue_pointer + 1) %
                             network_connection_info[x][y].axon_length];
                 }
             }
             //cout << "neuron output: " << y << " buffer: " << buffer << endl;
+            std::cout << "potat-OS1 " << buffer << std::endl;
             output_neuron_info[y].enqueue(
                     activate(buffer, output_neuron_info[y].max_activation, hidden_neuron_info[y].bias));
         }
@@ -212,12 +217,16 @@ void tick() {
         if (hidden_neuron_info[y - OUTPUT_NEURONS].exist) {
             for (int x = 0; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
                 if (network_connection_info[x][y].exist) {
+                    std::cout << "lul2 " << network_connection_info[x][y].axon_throughput_queue[
+                            (network_connection_info[x][y].queue_pointer + 1) %
+                            network_connection_info[x][y].axon_length] << std::endl;
                     buffer += network_connection_info[x][y].axon_throughput_queue[
                             (network_connection_info[x][y].queue_pointer + 1) %
                             network_connection_info[x][y].axon_length];
                 }
             }
             //cout << "neuron hidden: " << y << " buffer: " << buffer << endl;
+            std::cout << "potat-OS2 " << buffer << std::endl;
             hidden_neuron_info[y - OUTPUT_NEURONS].enqueue(
                     activate(buffer, hidden_neuron_info[y - OUTPUT_NEURONS].max_activation,
                              hidden_neuron_info[y - OUTPUT_NEURONS].bias));
@@ -332,7 +341,7 @@ int main(int argc, char *argv[]) {
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
     cout << "tick time: " << time_span.count()/1000 << endl;
 
-    //window.join();
+    window.join();
     cout << "window closed" << endl;
     del_neuron_info();
     del_Network();
