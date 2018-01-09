@@ -5,7 +5,7 @@
 		<Option title="NeuralKicker"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake_modules\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug"/>
@@ -92,6 +92,9 @@
 		</Unit>
 		<Unit filename="/home/sebastian/CLionProjects/IntelliKick/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/sebastian/CLionProjects/IntelliKick/cmake_modules/FindSFML.cmake">
+			<Option virtualFolder="CMake Files\cmake_modules\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>
