@@ -23,9 +23,10 @@ struct graph {
     node *nodes;
     int **structure;
     double **adjacency;
+    double **throughput;
     int *size;
     int total_connections;
-    int test;
+    float size_y;
 };
 
 //tests wether a given node(id) is part of the given structure and returns true if it exists with the position where it
@@ -45,11 +46,27 @@ int* exist(int** structure, int id) {
     return results;
 }
 
+//updates the graph to the current state of the network
+void update(graph* network){
+    network->throughput = new double*[network->total_connections];
+    axon_info **temp = get_network_connection_info();
+    for(int i = 0; i < MAX_HIDDEN_NEURONS+INPUT_NEURONS; i++){
+        for(int j = 0; j < MAX_HIDDEN_NEURONS+OUTPUT_NEURONS; j++){
+            if(temp[i][j].exist){
+                for(int k = 0; k < network->total_connections; k++){
+                    if(network->adjacency[k][5] == i && network->adjacency[k][6] == j){
+                        network->throughput[k] = temp[i][j].axon_throughput_queue;
+                    }
+                }
+            }
+        }
+    }
+}
 
 //waits for inputs and returns catched input
 double* getInput(double *paras) {
-    while (1) {
-        std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
+    //while (1) {
+        //std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
         sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
@@ -59,16 +76,16 @@ double* getInput(double *paras) {
                 case sf::Event::KeyPressed:
                     switch (event.key.code) {
                         case sf::Keyboard::Down:
-                            paras[1] = paras[1] - 5;
+                            paras[1] = paras[1] - (1/paras[2])*5;
                             return paras;
                         case sf::Keyboard::Up:
-                            paras[1] = paras[1] + 5;
+                            paras[1] = paras[1] + (1/paras[2])*5;
                             return paras;
                         case sf::Keyboard::Left:
-                            paras[0] = paras[0] + 5;
+                            paras[0] = paras[0] + (1/paras[2])*5;
                             return paras;
                         case sf::Keyboard::Right:
-                            paras[0] = paras[0] - 5;
+                            paras[0] = paras[0] - (1/paras[2])*5;
                             return paras;
                         case sf::Keyboard::Add:
                             paras[2] *= 1.01;
@@ -83,12 +100,13 @@ double* getInput(double *paras) {
                     break;
             }
         }
-        std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
+        /*std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
         if (time_span.count() < 1.f / 30.f) {
             std::this_thread::sleep_for(frame - time_span);
-        }
-    }
+        }*/
+    //}
+    return paras;
 }
 
 //transforms the given network into a flow-tree structure
@@ -105,20 +123,21 @@ void helpCreateGraph(graph* network, int start, bool complete) {
             if (from[i] != -1) {
                 for (int j = 0; j < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; j++) {
                     if (get_network_connection_info()[from[i]][j].exist) {
-                        network->adjacency[network->total_connections] = new double[5];
+                        network->adjacency[network->total_connections] = new double[7];
                         network->adjacency[network->total_connections][0] = get_network_connection_info()[from[i]][j].weight;
+                        network->adjacency[network->total_connections][5] = from[i];
+                        network->adjacency[network->total_connections][6] = j;
                         network->adjacency[network->total_connections][1] = pos_x - 1;
                         network->adjacency[network->total_connections][2] = pos_x == 1 ? start : i;
                         int *exists = exist(network->structure, INPUT_NEURONS + j + 1);
                         if (exists[0] != 1) {
-                            int test = 0;
-                            while(network->structure[pos_x][starting_points_new+test] != 0){
-                                test++;
+                            int offset = 0;
+                            while(network->structure[pos_x][starting_points_new+offset] != 0){
+                                offset++;
                             }
-                            if(network->structure[pos_x][starting_points_new+test] != 0) std::cout << INPUT_NEURONS + j + 1 << " " << network->structure[pos_x][starting_points_new] << std::endl;
                             network->adjacency[network->total_connections][3] = pos_x;
-                            network->adjacency[network->total_connections][4] = starting_points_new+test;
-                            network->structure[pos_x][starting_points_new+test] = INPUT_NEURONS + j + 1;
+                            network->adjacency[network->total_connections][4] = starting_points_new+offset;
+                            network->structure[pos_x][starting_points_new+offset] = INPUT_NEURONS + j + 1;
                             if (j >= OUTPUT_NEURONS) {
                                 to[starting_points_new] = INPUT_NEURONS + (j - OUTPUT_NEURONS);
                             } else {
@@ -152,8 +171,10 @@ int helpCreateTree(graph* network, int** newStructure, double** newAdjacency, in
     for (int i = 0; i < network->total_connections; i++) {
         if (network->adjacency[i][1] == pos_x && network->adjacency[i][2] == pos_y) {
             connections[0]++;
-            newAdjacency[connections[0]] = new double[5];
+            newAdjacency[connections[0]] = new double[7];
             newAdjacency[connections[0]][0] = network->adjacency[i][0];
+            newAdjacency[connections[0]][5] = network->adjacency[i][5];
+            newAdjacency[connections[0]][6] = network->adjacency[i][6];
             newAdjacency[connections[0]][1] = network->structure[pos_x][pos_y];
             int *exists = exist(network->structure,
                                 network->structure[(int) network->adjacency[i][3]][(int) network->adjacency[i][4]]);
@@ -167,11 +188,11 @@ int helpCreateTree(graph* network, int** newStructure, double** newAdjacency, in
         }
     }
     newStructure[pos_x][newPos + factor / 2] = network->structure[pos_x][pos_y];
-    if (pos_x == 0) network->test += factor;
+    if (pos_x == 0) network->size_y += factor;
     return factor == 0 ? 1 : factor;
 }
 
-//tells the connections the structure of the flow tree
+//adjusts the connections according to the structure of the flow tree
 void layConnections(graph* network) {
     for (int i = 0; i < network->total_connections; i++) {
         int *exists1 = exist(network->structure, (int) network->adjacency[i][1]);
@@ -209,7 +230,7 @@ graph* createGraph() {
     int *connections = new int[1];
     connections[0] = -1;
     for (int i = 0; i < INPUT_NEURONS; i++) {
-        helpCreateTree(network, newStructure, newAdjacency, 0, i, i + network->test, connections);
+        helpCreateTree(network, newStructure, newAdjacency, 0, i, i + network->size_y, connections);
     }
     network->total_connections = connections[0] + 1;
     network->structure = newStructure;
@@ -225,10 +246,10 @@ void draw(double* paras, graph* network) {
     for (int i = 0; i < network->total_connections; i++) {
         double *from = new double[2];
         double *to = new double[2];
-        from[0] = network->adjacency[i][1] * 2 * paras[2] + 10 + paras[0];
-        from[1] = network->adjacency[i][2] * paras[2] + 10 + paras[1];
-        to[0] = network->adjacency[i][3] * 2 * paras[2] + 10 + paras[0];
-        to[1] = network->adjacency[i][4] * paras[2] + 10 + paras[1];
+        from[0] = 950 + (-950 + network->adjacency[i][1] * 2 + paras[0]) * paras[2] + 10;
+        from[1] = 450 + (-450 + network->adjacency[i][2] + paras[1]) * paras[2] + 10;
+        to[0] = 950 + (-950 + network->adjacency[i][3] * 2 + paras[0]) * paras[2] + 10;
+        to[1] = 450 + (-450 + network->adjacency[i][4] + paras[1]) * paras[2] + 10;
         double norm = std::sqrt((from[0] - to[0]) * (from[0] - to[0]) + (from[1] - to[1]) * (from[1] - to[1]));
         double *normV = new double[2];
         normV[0] = (to[0] - from[0]) / norm;
@@ -256,6 +277,16 @@ void draw(double* paras, graph* network) {
             window.draw(lineM, 2, sf::Lines);
             window.draw(lineL, 2, sf::Lines);
             window.draw(lineR, 2, sf::Lines);
+            //draw throughput
+            if (network->throughput[i][0] != 0) {
+                sf::CircleShape dot;
+                dot.setRadius(5);
+                dot.setFillColor(sf::Color(0, 0, 0));
+                dot.setPosition(((from[0] + to[0]) / 2 - 5) +
+                                (normV[1] / (normV[0] == 0 ? 1 : normV[0])) * (norm2 == 0 ? 1 : norm2) * 5,
+                                ((from[1] + to[1]) / 2 - 5) - 1 * norm2 * 5);
+                window.draw(dot);
+            }
         }
     }
     //draw nodes
@@ -277,8 +308,8 @@ void draw(double* paras, graph* network) {
                     id.setString(std::to_string((network->structure[x][y] - (INPUT_NEURONS + OUTPUT_NEURONS) - 1)));
                 }
                 c.setRadius(10);
-                c.setPosition(x * 2 * paras[2] + paras[0], y * paras[2] + paras[1]);
-                id.setPosition(x * 2 * paras[2] + 5 + paras[0], y * paras[2] + paras[1]);
+                c.setPosition(950+(-950 + x * 2 + paras[0]) * paras[2], 450+(-450 + y + paras[1]) * paras[2]);
+                id.setPosition(955+(-950 + x * 2 + paras[0]) * paras[2], 450+(-450 + y + paras[1]) * paras[2]);
                 id.setCharacterSize(15);
                 id.setFillColor(sf::Color::White);
                 window.draw(c);
@@ -291,9 +322,14 @@ void draw(double* paras, graph* network) {
 //initializes window
 //use arrow keys to move the graph, add/substract key to zoom
 int createWindow() {
+    std::cout << "creating graph\n";
     graph* network = createGraph();
+    std::cout << "created graph\n";
     double* paras = new double[3];
     paras[2] = 50; //initial zoom factor
+    paras[0] = 932;
+    paras[1] = 442;
+    std::cout << "window opening\n";
     window.create(sf::VideoMode(1900, 1080), "Network Graph");
     if (!font.loadFromFile("./fonts/arial.ttf"))
     {
@@ -307,13 +343,22 @@ int createWindow() {
         ts2 = std::chrono::high_resolution_clock::now();
     frame = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
     window.clear(sf::Color(255,255,255));
+    update(network);
     draw(paras, network);
     window.display();
     //main loop
     while (window.isOpen()) {
+        //std::this_thread::sleep_for(std::chrono::duration<int>(1));
+        ts1 = std::chrono::high_resolution_clock::now();
         window.clear(sf::Color(255,255,255));
+        update(network);
         draw(getInput(paras), network);
         window.display();
+        ts2 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
+        if (time_span.count() < 1.f / 30.f) {
+            std::this_thread::sleep_for(frame - time_span);
+        }
     }
     ts2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);

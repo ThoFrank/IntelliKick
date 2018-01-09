@@ -113,20 +113,26 @@ void init_Network() {
     }
 }
 
+int axons = 0;
+
 //help method
 void init_Axon(int x, int y) {
     srand((unsigned) std::chrono::high_resolution_clock::now().time_since_epoch().count());
     //manipulating the exist will alter the network structure
     //-> should be manipulated by a fitting algorithm
-    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 15) >= 1 ? 0 : 1;
-    //following should only be set if exist = true
-    //initializes network with random weights (between -1 and 1)
-    network_connection_info[x][y].weight = (((double) random()) / RAND_MAX) * 2 - 1;
-    //initializes axon with random length (= queue length)
-    network_connection_info[x][y].axon_length = (int) (1 + random() % MAX_AXON_LENGTH);
-    //initializes queue; axon_length is the initial looked at destination synapsis
-    //network_connection_info[x][y].axon_throughput_queue =
-    //        new double[network_connection_info[x][y].axon_length];
+    network_connection_info[x][y].exist = (int)((((double) random()) / RAND_MAX) * 50) >= 1 ? 0 : 1;
+    if(network_connection_info[x][y].exist) {
+        //following should only be set if exist = true
+        //initializes network with random weights (between -1 and 1)
+        network_connection_info[x][y].weight = (((double) random()) / RAND_MAX) * 2 - 1;
+        //initializes axon with random length (= queue length)
+        network_connection_info[x][y].axon_length = (int) (1 + random() % MAX_AXON_LENGTH);
+        //initializes queue; axon_length is the initial looked at destination synapsis
+        network_connection_info[x][y].axon_throughput_queue =
+                new double[network_connection_info[x][y].axon_length];
+        network_connection_info[x][y].axon_throughput_queue[0] = 0;
+        axons++;
+    }
 }
 
 //deletes the connection between neurones
@@ -144,18 +150,27 @@ void init_neuron_info() {
     for (int i = 0; i < INPUT_NEURONS; i++) {
         input_neuron_info[i].exist = true;
         input_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
+            input_neuron_info[i].output_memory[j] = 0;
+        }
     }
 
     output_neuron_info = new neuron_info[OUTPUT_NEURONS];
     for (int i = 0; i < OUTPUT_NEURONS; i++) {
         output_neuron_info[i].exist = true;
         output_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
+            input_neuron_info[i].output_memory[j] = 0;
+        }
     }
 
     hidden_neuron_info = new neuron_info[MAX_HIDDEN_NEURONS];
     for (int i = 0; i < MAX_HIDDEN_NEURONS; i++) {
         hidden_neuron_info[i].exist = true;
         hidden_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
+            input_neuron_info[i].output_memory[j] = 0;
+        }
     }
 }
 
@@ -187,7 +202,7 @@ void tick() {
                             network_connection_info[x][y].axon_length];
                 }
             }
-            cout << "neuron output: " << y << " buffer: " << buffer << endl;
+            //cout << "neuron output: " << y << " buffer: " << buffer << endl;
             output_neuron_info[y].enqueue(
                     activate(buffer, output_neuron_info[y].max_activation, hidden_neuron_info[y].bias));
         }
@@ -202,7 +217,7 @@ void tick() {
                             network_connection_info[x][y].axon_length];
                 }
             }
-            cout << "neuron hidden: " << y << " buffer: " << buffer << endl;
+            //cout << "neuron hidden: " << y << " buffer: " << buffer << endl;
             hidden_neuron_info[y - OUTPUT_NEURONS].enqueue(
                     activate(buffer, hidden_neuron_info[y - OUTPUT_NEURONS].max_activation,
                              hidden_neuron_info[y - OUTPUT_NEURONS].bias));
@@ -212,6 +227,7 @@ void tick() {
     for (int x = 0; x < INPUT_NEURONS; x++) {
         for (int y = 0; y < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; y++) {
             if (network_connection_info[x][y].exist) {
+                if(input_neuron_info[x].last_output() != 0) std::cout << "lul1\n";
                 network_connection_info[x][y].enqueue(input_neuron_info[x].last_output());
             }
         }
@@ -219,6 +235,7 @@ void tick() {
     for (int x = INPUT_NEURONS; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
         for (int y = 0; y < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; y++) {
             if (network_connection_info[x][y].exist) {
+                if(hidden_neuron_info[x - INPUT_NEURONS].last_output() != 0) std::cout << "lul2\n";
                 network_connection_info[x][y].enqueue(hidden_neuron_info[x - INPUT_NEURONS].last_output());
             }
         }
@@ -261,9 +278,11 @@ void learn() {
 
 double relu_tanh(double in, double maxActivation, double bias) {
     if (in > 0 && in < maxActivation) {
+        return 1;
         return std::min(in + tanh(in + bias), maxActivation) == maxActivation ? maxActivation : tanh(
                 in / expected_average_degree);
     } else {
+        //std::cout << "ree? " << in << std::endl;
         return 0;
     }
 }
@@ -291,23 +310,29 @@ int main(int argc, char *argv[]) {
     cout << "initializing network\n";
     init_Network();
     cout << "done\n";
+    cout << "total connections: " << axons << endl;
 
     //print_adjacency();
 
-    cout << "creating graph\n";
     std::thread window (createWindow);
-    cout << "window openend\n";
 
-    /*input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 1;
-    for (int i = 0; i < 15; i++) {
+    input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 1;
+
+    std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 20; i++) {
         for (int a = 0; a < OUTPUT_NEURONS; a++) {
             cout << i << " Output: " << output_neuron_info[a].last_output() << endl;
         }
+        std::cout << "LUL\n";
+        std::this_thread::sleep_for(std::chrono::duration<int>(1));
         tick();
         input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 0;
-    }*/
+    }
+    std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
+    cout << "tick time: " << time_span.count()/1000 << endl;
 
-    window.join();
+    //window.join();
     cout << "window closed" << endl;
     del_neuron_info();
     del_Network();
