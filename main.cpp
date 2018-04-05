@@ -121,7 +121,7 @@ void init_Axon(int x, int y) {
     //manipulating the exist will alter the network structure
     //-> should be manipulated by a fitting algorithm
     network_connection_info[x][y].exist =
-            (int) ((((double) random()) / RAND_MAX) * MAX_HIDDEN_NEURONS * CONNECTIVITY) >= 1 ? 0 : 1;
+            ((((double) random()) / RAND_MAX) * MAX_HIDDEN_NEURONS * (1 / CONNECTIVITY)) < 1;
     if (network_connection_info[x][y].exist) {
         //following should only be set if exist = true
         //initializes network with random weights (between -1 and 1)
@@ -198,16 +198,11 @@ void tick() {
         if (output_neuron_info[y].exist) {
             for (int x = 0; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
                 if (network_connection_info[x][y].exist) {
-                    std::cout << "lul1 " << network_connection_info[x][y].axon_throughput_queue[
-                            (network_connection_info[x][y].queue_pointer + 1) %
-                            network_connection_info[x][y].axon_length] << std::endl;
                     buffer += network_connection_info[x][y].axon_throughput_queue[
                             (network_connection_info[x][y].queue_pointer + 1) %
                             network_connection_info[x][y].axon_length];
                 }
             }
-            //cout << "neuron output: " << y << " buffer: " << buffer << endl;
-            std::cout << "potat-OS1 " << buffer << std::endl;
             output_neuron_info[y].enqueue(
                     activate(buffer, output_neuron_info[y].max_activation, hidden_neuron_info[y].bias));
         }
@@ -217,16 +212,11 @@ void tick() {
         if (hidden_neuron_info[y - OUTPUT_NEURONS].exist) {
             for (int x = 0; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
                 if (network_connection_info[x][y].exist) {
-                    std::cout << "lul2 " << network_connection_info[x][y].axon_throughput_queue[
-                            (network_connection_info[x][y].queue_pointer + 1) %
-                            network_connection_info[x][y].axon_length] << std::endl;
                     buffer += network_connection_info[x][y].axon_throughput_queue[
                             (network_connection_info[x][y].queue_pointer + 1) %
                             network_connection_info[x][y].axon_length];
                 }
             }
-            //cout << "neuron hidden: " << y << " buffer: " << buffer << endl;
-            std::cout << "potat-OS2 " << buffer << std::endl;
             hidden_neuron_info[y - OUTPUT_NEURONS].enqueue(
                     activate(buffer, hidden_neuron_info[y - OUTPUT_NEURONS].max_activation,
                              hidden_neuron_info[y - OUTPUT_NEURONS].bias));
@@ -236,7 +226,6 @@ void tick() {
     for (int x = 0; x < INPUT_NEURONS; x++) {
         for (int y = 0; y < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; y++) {
             if (network_connection_info[x][y].exist) {
-                if(input_neuron_info[x].last_output() != 0) std::cout << "lul1\n";
                 network_connection_info[x][y].enqueue(input_neuron_info[x].last_output());
             }
         }
@@ -244,7 +233,6 @@ void tick() {
     for (int x = INPUT_NEURONS; x < INPUT_NEURONS + MAX_HIDDEN_NEURONS; x++) {
         for (int y = 0; y < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; y++) {
             if (network_connection_info[x][y].exist) {
-                if(hidden_neuron_info[x - INPUT_NEURONS].last_output() != 0) std::cout << "lul2\n";
                 network_connection_info[x][y].enqueue(hidden_neuron_info[x - INPUT_NEURONS].last_output());
             }
         }
@@ -265,7 +253,7 @@ void helpLearn(int x, double total_activation) {
     }
 }
 
-double expected_average_degree = 1;     //how many incoming axons a neuron has on average
+double expected_average_degree = CONNECTIVITY;     //how many incoming axons a neuron has on average
 void learn() {
     if (feedback != 0) {
         for (int x = 0; x < INPUT_NEURONS; x++) {
@@ -287,7 +275,7 @@ void learn() {
 
 double relu_tanh(double in, double maxActivation, double bias) {
     if (in > 0 && in < maxActivation) {
-        return 1;
+        //return 1;
         return std::min(in + tanh(in + bias), maxActivation) == maxActivation ? maxActivation : tanh(
                 in / expected_average_degree);
     } else {
@@ -321,7 +309,7 @@ int main(int argc, char *argv[]) {
     cout << "done\n";
     cout << "total connections: " << axons << endl;
 
-    //print_adjacency();
+    print_adjacency();
 
     std::thread window (createWindow);
 
@@ -332,14 +320,14 @@ int main(int argc, char *argv[]) {
         for (int a = 0; a < OUTPUT_NEURONS; a++) {
             cout << i << " Output: " << output_neuron_info[a].last_output() << endl;
         }
-        std::cout << "LUL\n";
+        //std::cout << "LUL\n";
         std::this_thread::sleep_for(std::chrono::duration<int>(1));
         tick();
         input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 0;
     }
     std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
-    cout << "tick time: " << time_span.count()/1000 << endl;
+    cout << "tick time: " << time_span.count()/20 << endl;
 
     window.join();
     cout << "window closed" << endl;
