@@ -27,6 +27,7 @@ struct graph {
     int *size;
     int total_connections;
     float size_y;
+    int size_x;
 };
 
 //tests wether a given node(id) is part of the given structure and returns true if it exists with the position where it
@@ -47,14 +48,14 @@ int* exist(int** structure, int id) {
 }
 
 //updates the graph to the current state of the network
-void update(graph* network){
-    network->throughput = new double*[network->total_connections];
+void update(graph* network) {
+    network->throughput = new double *[network->total_connections];
     axon_info **temp = get_network_connection_info();
-    for(int i = 0; i < MAX_HIDDEN_NEURONS+INPUT_NEURONS; i++){
-        for(int j = 0; j < MAX_HIDDEN_NEURONS+OUTPUT_NEURONS; j++){
-            if(temp[i][j].exist){
-                for(int k = 0; k < network->total_connections; k++){
-                    if(network->adjacency[k][5] == i && network->adjacency[k][6] == j){
+    for (int i = 0; i < MAX_HIDDEN_NEURONS + INPUT_NEURONS; i++) {
+        for (int j = 0; j < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; j++) {
+            if (temp[i][j].exist) {
+                for (int k = 0; k < network->total_connections; k++) {
+                    if (network->adjacency[k][5] == i && network->adjacency[k][6] == j) {
                         network->throughput[k] = temp[i][j].axon_throughput_queue;
                     }
                 }
@@ -66,45 +67,45 @@ void update(graph* network){
 //waits for inputs and returns catched input
 double* getInput(double *paras) {
     //while (1) {
-        //std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    return paras;
-                case sf::Event::KeyPressed:
-                    switch (event.key.code) {
-                        case sf::Keyboard::Down:
-                            paras[1] = paras[1] - (1/paras[2])*5;
-                            return paras;
-                        case sf::Keyboard::Up:
-                            paras[1] = paras[1] + (1/paras[2])*5;
-                            return paras;
-                        case sf::Keyboard::Left:
-                            paras[0] = paras[0] + (1/paras[2])*5;
-                            return paras;
-                        case sf::Keyboard::Right:
-                            paras[0] = paras[0] - (1/paras[2])*5;
-                            return paras;
-                        case sf::Keyboard::Add:
-                            paras[2] *= 1.01;
-                            return paras;
-                        case sf::Keyboard::Subtract:
-                            paras[2] /= 1.01;
-                            return paras;
-                        default:
-                            break;
-                    }
-                default:
-                    break;
-            }
+    //std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                return paras;
+            case sf::Event::KeyPressed:
+                switch (event.key.code) {
+                    case sf::Keyboard::Down:
+                        paras[1] = paras[1] - (1 / paras[2]) * 5;
+                        return paras;
+                    case sf::Keyboard::Up:
+                        paras[1] = paras[1] + (1 / paras[2]) * 5;
+                        return paras;
+                    case sf::Keyboard::Left:
+                        paras[0] = paras[0] + (1 / paras[2]) * 5;
+                        return paras;
+                    case sf::Keyboard::Right:
+                        paras[0] = paras[0] - (1 / paras[2]) * 5;
+                        return paras;
+                    case sf::Keyboard::Add:
+                        paras[2] *= 1.01;
+                        return paras;
+                    case sf::Keyboard::Subtract:
+                        paras[2] /= 1.01;
+                        return paras;
+                    default:
+                        break;
+                }
+            default:
+                break;
         }
-        /*std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
-        if (time_span.count() < 1.f / 30.f) {
-            std::this_thread::sleep_for(frame - time_span);
-        }*/
+    }
+    /*std::chrono::high_resolution_clock::time_point ts2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
+    if (time_span.count() < 1.f / 30.f) {
+        std::this_thread::sleep_for(frame - time_span);
+    }*/
     //}
     return paras;
 }
@@ -132,12 +133,13 @@ void helpCreateGraph(graph* network, int start, bool complete) {
                         int *exists = exist(network->structure, INPUT_NEURONS + j + 1);
                         if (exists[0] != 1) {
                             int offset = 0;
-                            while(network->structure[pos_x][starting_points_new+offset] != 0){
+                            while (network->structure[pos_x][starting_points_new + offset] != 0) {
                                 offset++;
                             }
                             network->adjacency[network->total_connections][3] = pos_x;
-                            network->adjacency[network->total_connections][4] = starting_points_new+offset;
-                            network->structure[pos_x][starting_points_new+offset] = INPUT_NEURONS + j + 1;
+                            network->adjacency[network->total_connections][4] = starting_points_new + offset;
+                            network->structure[pos_x][starting_points_new + offset] = INPUT_NEURONS + j + 1;
+                            network->size_x = pos_x > network->size_x ? pos_x : network->size_x;
                             if (j >= OUTPUT_NEURONS) {
                                 to[starting_points_new] = INPUT_NEURONS + (j - OUTPUT_NEURONS);
                             } else {
@@ -187,7 +189,11 @@ int helpCreateTree(graph* network, int** newStructure, double** newAdjacency, in
             }
         }
     }
-    newStructure[pos_x][newPos + factor / 2] = network->structure[pos_x][pos_y];
+    /*if (network->structure[pos_x][pos_y] > INPUT_NEURONS &&
+        network->structure[pos_x][pos_y] <= INPUT_NEURONS + OUTPUT_NEURONS)
+        newStructure[network->size_x + 1][newPos + factor / 2] = network->structure[pos_x][pos_y];
+    else*/
+        newStructure[pos_x][newPos + factor / 2] = network->structure[pos_x][pos_y];
     if (pos_x == 0) network->size_y += factor;
     return factor == 0 ? 1 : factor;
 }
@@ -212,6 +218,7 @@ graph* createGraph() {
     network->adjacency = new double *[(INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS) * MAX_HIDDEN_NEURONS];
     double **newAdjacency = new double *[(INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS) * MAX_HIDDEN_NEURONS];
     int **newStructure = new int *[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
+    network->size_x = 0;
     for (int i = 0; i < INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; i++) {
         network->structure[i] = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
         newStructure[i] = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
@@ -221,10 +228,10 @@ graph* createGraph() {
     }*/
     for (double i = 0; i < INPUT_NEURONS; i++) {
         //helpCreateGraph(network, i, complete);
-        if ((int)i%2){
-            helpCreateGraph(network, INPUT_NEURONS/2-i/2, complete);
-        } else{
-            helpCreateGraph(network, INPUT_NEURONS/2+i/2, complete);
+        if ((int) i % 2) {
+            helpCreateGraph(network, INPUT_NEURONS / 2 - i / 2, complete);
+        } else {
+            helpCreateGraph(network, INPUT_NEURONS / 2 + i / 2, complete);
         }
     }
     int *connections = new int[1];
@@ -308,8 +315,8 @@ void draw(double* paras, graph* network) {
                     id.setString(std::to_string((network->structure[x][y] - (INPUT_NEURONS + OUTPUT_NEURONS) - 1)));
                 }
                 c.setRadius(10);
-                c.setPosition(950+(-950 + x * 2 + paras[0]) * paras[2], 450+(-450 + y + paras[1]) * paras[2]);
-                id.setPosition(955+(-950 + x * 2 + paras[0]) * paras[2], 450+(-450 + y + paras[1]) * paras[2]);
+                c.setPosition(950 + (-950 + x * 2 + paras[0]) * paras[2], 450 + (-450 + y + paras[1]) * paras[2]);
+                id.setPosition(955 + (-950 + x * 2 + paras[0]) * paras[2], 450 + (-450 + y + paras[1]) * paras[2]);
                 id.setCharacterSize(15);
                 id.setFillColor(sf::Color::White);
                 window.draw(c);
@@ -323,18 +330,17 @@ void draw(double* paras, graph* network) {
 //use arrow keys to move the graph, add/substract key to zoom
 int createWindow() {
     std::cout << "creating graph\n";
-    graph* network = createGraph();
+    graph *network = createGraph();
     std::cout << "created graph\n";
-    double* paras = new double[3];
+    double *paras = new double[3];
     paras[2] = 50; //initial zoom factor
     paras[0] = 932;
     paras[1] = 442;
     std::cout << "window opening\n";
     window.create(sf::VideoMode(1900, 1080), "Network Graph");
-    if (!font.loadFromFile("./fonts/arial.ttf"))
-    {
+    if (!font.loadFromFile("./fonts/arial.ttf")) {
         std::cout << "failed to load arial.ttf\n";
-    }else{
+    } else {
         std::cout << "successfully loaded arial.ttf!\n";
     }
     std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
@@ -342,7 +348,7 @@ int createWindow() {
     while (std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1).count() < 1.f / 30.f)
         ts2 = std::chrono::high_resolution_clock::now();
     frame = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
-    window.clear(sf::Color(255,255,255));
+    window.clear(sf::Color(255, 255, 255));
     update(network);
     draw(paras, network);
     window.display();
@@ -350,7 +356,7 @@ int createWindow() {
     while (window.isOpen()) {
         //std::this_thread::sleep_for(std::chrono::duration<int>(1));
         ts1 = std::chrono::high_resolution_clock::now();
-        window.clear(sf::Color(255,255,255));
+        window.clear(sf::Color(255, 255, 255));
         update(network);
         draw(getInput(paras), network);
         window.display();
