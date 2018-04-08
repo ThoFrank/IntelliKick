@@ -21,7 +21,9 @@ struct node{
 
 struct graph {
     node *nodes;
+    //stores node ID and its location
     int **structure;
+    //adjacency 0=weight, 1=pos_x from, 2=pos_y from, 3=pos_x to, 4=pos_y to, 5=id, from 6=id
     double **adjacency;
     double **throughput;
     int *size;
@@ -112,6 +114,69 @@ double* getInput(double *paras) {
 
 //transforms the given network into a flow-tree structure
 void helpCreateGraph(graph* network, int start, bool complete) {
+    int *from = new int[MAX_HIDDEN_NEURONS];
+    int *to = new int[MAX_HIDDEN_NEURONS];
+    int *buffer;
+    from[0] = start;
+    int starting_points_old = 1;
+    int starting_points_new = 0;
+    int pos_x = 1;
+    int offset = 0, outs = 0;
+    network->structure[0][start] = from[0] + 1;
+    while (1) {
+        offset = 0;
+        while (network->structure[pos_x][offset] != 0) {
+            offset++;
+        }
+        for (int i = 0; i < starting_points_old; i++) {
+            for (int j = 0; j < MAX_HIDDEN_NEURONS + OUTPUT_NEURONS; j++) {
+                if (get_network_connection_info()[from[i]][j].exist) {
+                    network->adjacency[network->total_connections] = new double[7];
+                    network->adjacency[network->total_connections][0] = get_network_connection_info()[from[i]][j].weight;
+                    network->adjacency[network->total_connections][1] = pos_x - 1;
+                    network->adjacency[network->total_connections][2] = exist(network->structure,
+                                                                              from[i] >= INPUT_NEURONS ? from[i] +
+                                                                                                         OUTPUT_NEURONS +
+                                                                                                         1 : from[i] +
+                                                                                                             1)[2];
+                    network->adjacency[network->total_connections][5] = from[i];
+                    network->adjacency[network->total_connections][6] = j;
+                    int *exists = exist(network->structure, j + 1 + INPUT_NEURONS);
+                    if (exists[0] == 0) {
+                        network->adjacency[network->total_connections][3] = pos_x;
+                        network->adjacency[network->total_connections][4] = starting_points_new + outs + offset;
+                        network->structure[pos_x][starting_points_new + outs + offset] = j + 1 + INPUT_NEURONS;
+                        network->size_x = pos_x > network->size_x ? pos_x : network->size_x;
+                        if (j >= OUTPUT_NEURONS) {
+                            to[starting_points_new] = (j - OUTPUT_NEURONS) + INPUT_NEURONS;
+                            starting_points_new++;
+                        } else {
+                            outs++;
+                        }
+                    } else {
+                        network->adjacency[network->total_connections][3] = exists[1];
+                        network->adjacency[network->total_connections][4] = exists[2];
+                    }
+                    network->total_connections++;
+                }
+            }
+        }
+        if (starting_points_new == 0) return;
+        buffer = from;
+        from = to;
+        to = buffer;
+        starting_points_old = starting_points_new;
+        starting_points_new = 0;
+        outs = 0;
+        pos_x++;
+    }
+}
+
+
+
+//old version
+/*
+void helpCreateGraph(graph* network, int start, bool complete) {
     int *from = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
     int *to = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
     from[0] = start;
@@ -127,6 +192,9 @@ void helpCreateGraph(graph* network, int start, bool complete) {
                         network->adjacency[network->total_connections] = new double[7];
                         network->adjacency[network->total_connections][0] = get_network_connection_info()[from[i]][j].weight;
                         network->adjacency[network->total_connections][5] = from[i];
+                        if(from[i] > INPUT_NEURONS && from[i] <= INPUT_NEURONS+OUTPUT_NEURONS){
+                            std::cout << "ree";
+                        }
                         network->adjacency[network->total_connections][6] = j;
                         network->adjacency[network->total_connections][1] = pos_x - 1;
                         network->adjacency[network->total_connections][2] = pos_x == 1 ? start : i;
@@ -165,6 +233,7 @@ void helpCreateGraph(graph* network, int start, bool complete) {
         pos_x++;
     }
 }
+ */
 
 //calculates the y coordinates of each node to get a visually more appealing flow-tree
 //TODO: adjacency could already be finished in helpCreateTree()
@@ -189,10 +258,10 @@ int helpCreateTree(graph* network, int** newStructure, double** newAdjacency, in
             }
         }
     }
-    /*if (network->structure[pos_x][pos_y] > INPUT_NEURONS &&
+    if (network->structure[pos_x][pos_y] > INPUT_NEURONS &&
         network->structure[pos_x][pos_y] <= INPUT_NEURONS + OUTPUT_NEURONS)
         newStructure[network->size_x + 1][newPos + factor / 2] = network->structure[pos_x][pos_y];
-    else*/
+    else
         newStructure[pos_x][newPos + factor / 2] = network->structure[pos_x][pos_y];
     if (pos_x == 0) network->size_y += factor;
     return factor == 0 ? 1 : factor;
@@ -223,6 +292,7 @@ graph* createGraph() {
         network->structure[i] = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
         newStructure[i] = new int[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
     }
+    //helpCreateGraph2(network, 0, complete);
     /*for (int i = 0; i < INPUT_NEURONS; i++) {
         helpCreateGraph(network, i, complete);
     }*/
@@ -243,20 +313,23 @@ graph* createGraph() {
     network->structure = newStructure;
     network->adjacency = newAdjacency;
     layConnections(network);
+    std::cout << network->total_connections << std::endl;
     return network;
 }
 
 //draws the graph
 //TODO: make better zoom
 void draw(double* paras, graph* network) {
+    double stretch_x = network->size_y/network->size_x;
+    double stretch_y = 1;
     //draw connections
     for (int i = 0; i < network->total_connections; i++) {
         double *from = new double[2];
         double *to = new double[2];
-        from[0] = 950 + (-950 + network->adjacency[i][1] * 2 + paras[0]) * paras[2] + 10;
-        from[1] = 450 + (-450 + network->adjacency[i][2] + paras[1]) * paras[2] + 10;
-        to[0] = 950 + (-950 + network->adjacency[i][3] * 2 + paras[0]) * paras[2] + 10;
-        to[1] = 450 + (-450 + network->adjacency[i][4] + paras[1]) * paras[2] + 10;
+        from[0] = 950 + (-950 + network->adjacency[i][1] * stretch_x + paras[0]) * paras[2] + 10;
+        from[1] = 450 + (-450 + network->adjacency[i][2] * stretch_y + paras[1]) * paras[2] + 10;
+        to[0] = 950 + (-950 + network->adjacency[i][3] * stretch_x + paras[0]) * paras[2] + 10;
+        to[1] = 450 + (-450 + network->adjacency[i][4] * stretch_y + paras[1]) * paras[2] + 10;
         double norm = std::sqrt((from[0] - to[0]) * (from[0] - to[0]) + (from[1] - to[1]) * (from[1] - to[1]));
         double *normV = new double[2];
         normV[0] = (to[0] - from[0]) / norm;
@@ -290,8 +363,8 @@ void draw(double* paras, graph* network) {
                 dot.setRadius(5);
                 dot.setFillColor(sf::Color(0, 0, 0));
                 dot.setPosition(((from[0] + to[0]) / 2 - 5) +
-                                (normV[1] / (normV[0] == 0 ? 1 : normV[0])) * (norm2 == 0 ? 1 : norm2) * 5,
-                                ((from[1] + to[1]) / 2 - 5) - 1 * norm2 * 5);
+                                (normV[1] / (norm2 == 0 ? 1 : norm2)) * (norm2 == 0 ? 1 : norm2) * 5,
+                                ((from[1] + to[1]) / 2 - 5) - 1 * normV[0] * 5);
                 window.draw(dot);
             }
         }
@@ -315,8 +388,8 @@ void draw(double* paras, graph* network) {
                     id.setString(std::to_string((network->structure[x][y] - (INPUT_NEURONS + OUTPUT_NEURONS) - 1)));
                 }
                 c.setRadius(10);
-                c.setPosition(950 + (-950 + x * 2 + paras[0]) * paras[2], 450 + (-450 + y + paras[1]) * paras[2]);
-                id.setPosition(955 + (-950 + x * 2 + paras[0]) * paras[2], 450 + (-450 + y + paras[1]) * paras[2]);
+                c.setPosition(950 + (-950 + x * stretch_x + paras[0]) * paras[2], 450 + (-450 + y * stretch_y + paras[1]) * paras[2]);
+                id.setPosition(955 + (-950 + x * stretch_x + paras[0]) * paras[2], 450 + (-450 + y * stretch_y + paras[1]) * paras[2]);
                 id.setCharacterSize(15);
                 id.setFillColor(sf::Color::White);
                 window.draw(c);
@@ -333,7 +406,7 @@ int createWindow() {
     graph *network = createGraph();
     std::cout << "created graph\n";
     double *paras = new double[3];
-    paras[2] = 50; //initial zoom factor
+    paras[2] = 900/network->size_y; //initial zoom factor
     paras[0] = 932;
     paras[1] = 442;
     std::cout << "window opening\n";

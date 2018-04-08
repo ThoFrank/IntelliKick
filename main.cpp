@@ -150,7 +150,7 @@ void init_neuron_info() {
     input_neuron_info = new neuron_info[INPUT_NEURONS];
     for (int i = 0; i < INPUT_NEURONS; i++) {
         input_neuron_info[i].exist = true;
-        input_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        input_neuron_info[i].max_activation = 1;//std::numeric_limits<double>::max();
         for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
             input_neuron_info[i].output_memory[j] = 0;
         }
@@ -159,7 +159,7 @@ void init_neuron_info() {
     output_neuron_info = new neuron_info[OUTPUT_NEURONS];
     for (int i = 0; i < OUTPUT_NEURONS; i++) {
         output_neuron_info[i].exist = true;
-        output_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        output_neuron_info[i].max_activation = 1;//std::numeric_limits<double>::max();
         for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
             output_neuron_info[i].output_memory[j] = 0;
         }
@@ -168,7 +168,7 @@ void init_neuron_info() {
     hidden_neuron_info = new neuron_info[MAX_HIDDEN_NEURONS];
     for (int i = 0; i < MAX_HIDDEN_NEURONS; i++) {
         hidden_neuron_info[i].exist = true;
-        hidden_neuron_info[i].max_activation = std::numeric_limits<double>::max();
+        hidden_neuron_info[i].max_activation = 1;//std::numeric_limits<double>::max();
         for(int j = 0; j < OUTPUT_MEMORY_SIZE; j++){
             hidden_neuron_info[i].output_memory[j] = 0;
         }
@@ -317,11 +317,11 @@ int main(int argc, char *argv[]) {
 
     std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 20; i++) {
+        input_neuron_info[(int)((random()/(float)RAND_MAX)*INPUT_NEURONS)].output_memory[0] = random()/(float)RAND_MAX;
         for (int a = 0; a < OUTPUT_NEURONS; a++) {
             cout << i << " Output: " << output_neuron_info[a].last_output() << endl;
         }
-        //std::cout << "LUL\n";
-        std::this_thread::sleep_for(std::chrono::duration<int>(1));
+        std::this_thread::sleep_for(std::chrono::duration<float>(1));
         tick();
         input_neuron_info[0].output_memory[input_neuron_info[0].queue_pointer] = 0;
     }
