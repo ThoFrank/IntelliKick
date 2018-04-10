@@ -282,6 +282,7 @@ void layConnections(graph* network) {
 }
 
 //creates a new graph representing the neural network as flow-tree
+//TODO rotate branches of the tree for maximal planarity
 graph* createGraph() {
     graph *network = new graph;
     network->nodes = new node[INPUT_NEURONS + MAX_HIDDEN_NEURONS + OUTPUT_NEURONS];
