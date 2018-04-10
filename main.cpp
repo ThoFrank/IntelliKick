@@ -240,15 +240,15 @@ void tick() {
 }
 
 int feedback = 0;                       //should only be -1, 0 or 1, altering that should have an effect similiar to
-                                        //slightly good or bad when below 1/-1 or very good/bad when above 1/-1
+                                        //slightly good or bad when below 1/-1
 
 void helpLearn(int x, double total_activation) {
     double percentage_change = total_activation / (OUTPUT_MEMORY_SIZE);
     for (int y = 0; y < OUTPUT_NEURONS + MAX_HIDDEN_NEURONS; y++) {
         if (feedback < 0) {
-            network_connection_info[x][y].weight -= network_connection_info[x][y].weight * percentage_change;
+            network_connection_info[x][y].weight += network_connection_info[x][y].weight * percentage_change * feedback;
         } else {
-            network_connection_info[x][y].weight += (1 - network_connection_info[x][y].weight) * percentage_change;
+            network_connection_info[x][y].weight += (1 - network_connection_info[x][y].weight) * percentage_change * feedback;
         }
     }
 }
@@ -259,14 +259,14 @@ void learn() {
         for (int x = 0; x < INPUT_NEURONS; x++) {
             double total_activation = 0;
             for (int i = 0; i < OUTPUT_MEMORY_SIZE; i++) {
-                total_activation = total_activation + input_neuron_info[x].output_memory[i];
+                total_activation += input_neuron_info[x].output_memory[i];
             }
             helpLearn(x, total_activation);
         }
         for (int x = 0; x < MAX_HIDDEN_NEURONS; x++) {
             double total_activation = 0;
             for (int i = 0; i < OUTPUT_MEMORY_SIZE; i++) {
-                total_activation = total_activation + hidden_neuron_info[x].output_memory[i];
+                total_activation += hidden_neuron_info[x].output_memory[i];
             }
             helpLearn(x + INPUT_NEURONS, total_activation);
         }
@@ -317,7 +317,7 @@ int main(int argc, char *argv[]) {
 
     std::chrono::high_resolution_clock::time_point ts1 = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 20; i++) {
-        input_neuron_info[(int)((random()/(float)RAND_MAX)*INPUT_NEURONS)].output_memory[0] = random()/(float)RAND_MAX;
+        //input_neuron_info[(int)((random()/(float)RAND_MAX)*INPUT_NEURONS)].output_memory[0] = random()/(float)RAND_MAX;
         for (int a = 0; a < OUTPUT_NEURONS; a++) {
             cout << i << " Output: " << output_neuron_info[a].last_output() << endl;
         }

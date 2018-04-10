@@ -154,8 +154,10 @@ void helpCreateGraph(graph* network, int start, bool complete) {
                             outs++;
                         }
                     } else {
-                        network->adjacency[network->total_connections][3] = exists[1];
-                        network->adjacency[network->total_connections][4] = exists[2];
+                        network->adjacency[network->total_connections][3] = complete ? exists[1] : pos_x - 1;
+                        network->adjacency[network->total_connections][4] = complete ? exists[2] : exist(
+                                network->structure,
+                                from[i] >= INPUT_NEURONS ? from[i] + OUTPUT_NEURONS + 1 : from[i] + 1)[2];
                     }
                     network->total_connections++;
                 }
@@ -441,7 +443,7 @@ int createWindow() {
     }
     ts2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(ts2 - ts1);
-    std::cout << "window was open for: " << time_span.count() << " seconds" << std::endl;
+    std::cout << "window frametime: " << time_span.count() << " seconds" << std::endl;
     window.close();
 
     return 0;

@@ -6,7 +6,7 @@
 #define NEURALKICKER_GRAPHER_H
 
 //this will create the graph as tree when set to false and adds all non-tree edges when set to true
-const bool complete = true;
+const bool complete = false;
 
 int createWindow();
 
