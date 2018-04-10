@@ -1,3 +1,0 @@
-/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/sebastian/CLionProjects/IntelliKick/cmake-build-debug/CMakeFiles/NeuralKicker.dir
